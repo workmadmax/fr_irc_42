@@ -6,7 +6,7 @@
 /*   By: mdouglas <mdouglas@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/07 11:12:51 by mdouglas          #+#    #+#             */
-/*   Updated: 2024/06/12 17:50:35 by mdouglas         ###   ########.fr       */
+/*   Updated: 2024/06/12 18:50:31 by mdouglas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,6 @@ int		Server::getPort()
 {
 	return (_port);
 };
-
 
 /**
  * @brief Get the password of the server.
@@ -295,15 +294,15 @@ void	Server::initializeSocket()
 	// imprima o socket fd para depurar
 	std::cout << "Socket fd: " << _socket_fd << std::endl;
 	if (_socket_fd < 0)
-		throw std::runtime_error("socket() failed");
+		throw std::runtime_error("ERROR: socket() failed");
 	if (setsockopt(_socket_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(int)) < 0)
-		throw std::runtime_error("setsockopt() failed");
+		throw std::runtime_error("ERROR: setsockopt() failed");
 	if (fcntl(_socket_fd, F_SETFL, O_NONBLOCK) < 0)
-		throw std::runtime_error("fcntl() failed");
+		throw std::runtime_error("ERROR: fcntl() failed");
 	if (bind(_socket_fd, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0)
-		throw std::runtime_error("bind() failed");
+		throw std::runtime_error("ERROR: bind() failed. Check the server logs for more information.");
 	if (listen(_socket_fd, SOMAXCONN) < 0)
-		throw std::runtime_error("listen() failed");
+		throw std::runtime_error("ERROR: listen() failed. Check the server logs for more information.");
 	
 	new_poll_fd.fd = _socket_fd;
 	new_poll_fd.events = POLLIN;

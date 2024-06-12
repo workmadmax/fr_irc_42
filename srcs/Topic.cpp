@@ -6,7 +6,7 @@
 /*   By: mdouglas <mdouglas@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/09 11:41:13 by mdouglas          #+#    #+#             */
-/*   Updated: 2024/06/11 14:44:55 by mdouglas         ###   ########.fr       */
+/*   Updated: 2024/06/12 18:58:56 by mdouglas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,8 +60,8 @@ void Server::topic(std::vector<std::string> _cmd_args, int _client_fd)
 			sendUnknowCommand("331", _client_fd);
 		else
 		{
-			std::string _response = "332 " + _channel->getName() + " :" + _topic + "\r\n";
-			send(_client_fd, _response.c_str(), _response.size(), 0);
+			std::string _formatted_response = ": 332 " + _client->getNick() + " " + _channel->getName() + " :" + _topic + "\r\n";
+			send(_client_fd, _formatted_response.c_str(), _formatted_response.size(), 0);
 		}
 	}
 	else
@@ -73,7 +73,7 @@ void Server::topic(std::vector<std::string> _cmd_args, int _client_fd)
 		}
 		std::string _new_topic = _cmd_args[2];
 		_channel->setTopic(_new_topic);
-		std::string _response = "332 " + _channel->getName() + " :" + _new_topic + "\r\n";
+		std::string _response = ": 332 " + _client->getNick() + " " + _channel->getName() + " :" + _new_topic + "\r\n";
 		send(_client_fd, _response.c_str(), _response.size(), 0);
 	}
 };

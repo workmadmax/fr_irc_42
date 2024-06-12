@@ -6,7 +6,7 @@
 /*   By: mdouglas <mdouglas@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/10 10:22:47 by mdouglas          #+#    #+#             */
-/*   Updated: 2024/06/11 14:44:13 by mdouglas         ###   ########.fr       */
+/*   Updated: 2024/06/12 18:26:26 by mdouglas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,19 +18,19 @@ void	Server::invite(std::vector<std::string> _cmd_args, int _client_fd)
 	Client* _client = Server::handleClientFd(_client_fd);
 	
 	if (_cmd_args.size() == 0 || _cmd_args[0] == "") {
-		_response = "ERROR :Invalid number of arguments";
+		_response = "ERROR :Not enough parameters\r\n";
 		send(_client_fd, _response.c_str(), _response.size(), 0);
 		return ;
 	}
 	const std::string& _channel_name = _cmd_args[1];
 	Channel* _channel_ptr = getChannel(_channel_name);
 	if (_channel_ptr == NULL) {
-		_response = "ERROR :Channel does not exist";
+		_response = ":" + _client->getNick() + " NOTICE " + _channel_name + " :ERROR :Channel does not exist";
 		send(_client_fd, _response.c_str(), _response.size(), 0);
 		return ;
 	}
 	if (!_channel_ptr->checkOnChannel(_client->getNick())) {
-		_response = "ERROR :You are not in the channel";
+		_response = ":" + _client->getNick() + " NOTICE " + _channel_name + " :ERROR :You are not in the channel";
 		send(_client_fd, _response.c_str(), _response.size(), 0);
 		return ;
 	}

@@ -6,7 +6,7 @@
 /*   By: mdouglas <mdouglas@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/09 10:12:44 by mdouglas          #+#    #+#             */
-/*   Updated: 2024/06/11 14:54:57 by mdouglas         ###   ########.fr       */
+/*   Updated: 2024/06/12 18:53:43 by mdouglas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	Server::who(std::vector<std::string> _cmd_args, int _client_fd)
 		if (send(_client_fd, _response.c_str(), _response.size(), 0) == -1)
 			throw std::runtime_error("Error: send");
 	}
-	_response = "End of /WHO list";
+	_response = ": 315 " + _channel_name + " :End of /WHO list\r\n";
 	if (send(_client_fd, _response.c_str(), _response.size(), 0) == -1)
 		throw std::runtime_error("Error: send"); 
 };

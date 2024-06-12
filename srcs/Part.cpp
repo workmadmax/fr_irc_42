@@ -6,7 +6,7 @@
 /*   By: mdouglas <mdouglas@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/11 09:48:44 by mdouglas          #+#    #+#             */
-/*   Updated: 2024/06/11 14:54:02 by mdouglas         ###   ########.fr       */
+/*   Updated: 2024/06/12 18:40:30 by mdouglas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	Server::part(std::vector<std::string> _cmd_args, int _client_fd)
 	Client* _client = Server::handleClientFd(_client_fd);
 	
 	if (_cmd_args.empty()) {
-		_response = "ERROR :Invalid number of arguments";
+		_response = "ERROR :Invalid number of arguments" + END;
 		return ;
 	} else if (_cmd_args.size() > 1) {
 		for (size_t i = 1; i < _cmd_args.size(); i++)
@@ -34,12 +34,12 @@ void	Server::part(std::vector<std::string> _cmd_args, int _client_fd)
 		Channel* _channel_ptr = getChannel(_channel_name);
 		if (_channel_ptr == NULL)
 		{
-			_response = "ERROR :Channel does not exist";
+			_response = "ERROR :No such channel " + _channel_name + END;
 			send(_client_fd, _response.c_str(), _response.size(), 0);
 		}
 		else
 		{
-			_response = ":" + _client->getNick() + "!" + _client->getUsername() + "@" + _client->getHostname() + " PART " + _channel_name + "\r\n";
+			_response = ":" + _client->getNick() + "!" + _client->getUsername() + "@" + _client->getHostname() + " PART " + _channel_name + " :" + _party + END;
 			std::vector<Client*> _clients = _channel_ptr->getAllClients();
 			for (size_t i = 0; i < _clients.size(); i++)
 				send(_clients[i]->getClientFd(), _response.c_str(), _response.size(), 0);

@@ -6,7 +6,7 @@
 /*   By: mdouglas <mdouglas@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/11 10:39:47 by mdouglas          #+#    #+#             */
-/*   Updated: 2024/06/11 14:44:26 by mdouglas         ###   ########.fr       */
+/*   Updated: 2024/06/12 18:35:41 by mdouglas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ void Server::mode(std::vector<std::string> _cmd_args, int _client_fd)
 
 	if (_channel_ptr == NULL)
 	{
-		_response = "Error channel : " + _client->getNick() + " " + _channel_name + " :No such channel";
+		_response = ":" + IRC + " 403 " + _client->getNick() + " " + _channel_name + " :No such channel" + END;
 		send(_client_fd, _response.c_str(), _response.size(), 0);
 		return;
 	}
@@ -93,7 +93,7 @@ void Server::mode(std::vector<std::string> _cmd_args, int _client_fd)
 	}
 	if (!_channel_ptr->checkOperator(_client->getNick()))
 	{
-		_response = "Error : " + _client->getNick() + " :You're not channel operator";
+		_response = ":" + IRC + " 482 " + _client->getNick() + " " + _channel_name + " :You're not channel operator" + END;
 		send(_client_fd, _response.c_str(), _response.size(), 0);
 		return;
 	}
@@ -106,7 +106,7 @@ void Server::mode(std::vector<std::string> _cmd_args, int _client_fd)
 	if (_cmd_args.size() > 2)
 		_param = _cmd_args[2];
 	Client *_client_ptr = findClientByNick(_param);
-	_response = "Mode " + _mode + " set on channel " + _channel_name;
+	_response = ":" + IRC + _client->getNick() + " MODE " + _channel_name + " " + _mode + " " + _param + END;
 	for (; i < 10; i++)
 	{
 		if (_mode == _modes[i])
@@ -143,7 +143,7 @@ void Server::mode(std::vector<std::string> _cmd_args, int _client_fd)
 	case 5:
 		if (_param == "")
 		{
-			_response = IRC + ERR_NEEDMOREPARAMSNBR + _client->getNick() + _channel_name + " " + _channel_name + " k * :You must specify a parameter for the key mode. Syntax: <key>." + END;
+			_response = IRC + _param + _client->getNick() + _channel_name + " " + _channel_name + " k * :You must specify a parameter for the key mode. Syntax: <key>." + END;
 			send(_client_fd, _response.c_str(), _response.size(), 0);
 			return;
 		}
@@ -155,14 +155,14 @@ void Server::mode(std::vector<std::string> _cmd_args, int _client_fd)
 	case 6:
 		if (_param == "")
 		{
-			_response = IRC + ERR_NEEDMOREPARAMSNBR + _client->getNick() + _channel_name + " " + _channel_name + " o * :You must specify a parameter for the nick mode. Syntax: <nick>." + END;
+			_response = IRC + _param + _client->getNick() + _channel_name + " " + _channel_name + " o * :You must specify a parameter for the nick mode. Syntax: <nick>." + END;
 			send(_client_fd, _response.c_str(), _response.size(), 0);
 			return;
 		}
 
 		if (_client_ptr == NULL)
 		{
-			_response = IRC + ERR_NOSUCHNICKNBR + _param + ERR_NOSUCHNICK + END;
+			_response = IRC + _param + " :" + _channel_name + " " + _channel_name + " o * :You must specify a parameter for the nick mode. Syntax: <nick>." + END;
 			send(_client_fd, _response.c_str(), _response.size(), 0);
 			return;
 		}
@@ -177,14 +177,14 @@ void Server::mode(std::vector<std::string> _cmd_args, int _client_fd)
 	case 7:
 		if (_param == "")
 		{
-			_response = IRC + ERR_NEEDMOREPARAMSNBR + _client->getNick() + _channel_name + " " + _channel_name + " o * :You must specify a parameter for the nick mode. Syntax: <nick>." + END;
+			_response = IRC + _param + " :" + _channel_name + " " + _channel_name + " o * :You must specify a parameter for the nick mode. Syntax: <nick>." + END;
 			send(_client_fd, _response.c_str(), _response.size(), 0);
 			return;
 		}
 
 		if (_client_ptr == NULL)
 		{
-			_response = IRC + ERR_NOSUCHNICKNBR + _param + ERR_NOSUCHNICK + END;
+			_response = IRC + _param + " :" + _channel_name + " " + _channel_name + " o * :You must specify a parameter for the nick mode. Syntax: <nick>." + END;
 			send(_client_fd, _response.c_str(), _response.size(), 0);
 			return;
 		}
@@ -206,7 +206,7 @@ void Server::mode(std::vector<std::string> _cmd_args, int _client_fd)
 	case 9:
 		if (_param == "")
 		{
-			_response = IRC + ERR_NEEDMOREPARAMSNBR + _client->getNick() + _channel_name + " " + _channel_name + \
+			_response = IRC + _client->getNick() + _channel_name + " " + _channel_name + \
 				" l * :You must specify a parameter for the limit mode. Syntax: <limit>." + END;
 			send(_client_fd, _response.c_str(), _response.size(), 0);
 			return;
