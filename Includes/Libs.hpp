@@ -22,16 +22,6 @@
 # include <vector>
 
 # include "Channel.hpp"
-# include "OtherMacros.hpp"
-# include "Responses.hpp"
+# include "Macros.hpp"
 # include "Client.hpp"
 # include "Server.hpp"
-
-
-# define _MAX_CLIENT 777
-
-
-# define GREEN "\033[0;32m"
-# define RED "\033[0;31m"
-# define RESET "\033[0m"
-# define YELLOW "\033[0;33m"

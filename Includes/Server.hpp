@@ -14,12 +14,15 @@ class Server{
 		std::vector<Channel>		_channels; // Vetor de canais
 		std::vector<Client*>		_Clients; // Vetor de usuários
 		std::vector<struct pollfd>	_poll_fds; // Vetor de descritores de arquivo
+		// o nome do servidor
+		std::string					_server_name;
 
 
 	public:
 		// Setters
 		void						setPort(char *_input);
 		void						setPassword(char *_input);
+		
 	
 		// Getters
 		int							getPort();
@@ -29,6 +32,8 @@ class Server{
 		Client*						handleClientFd(int _client_fd);
 		Client*						findClientByNick(const std::string _nickname);
 		std::vector<Client*>		getClients();
+	
+
 		// methods functions
 		void						listenClient(int _client_fd);
 		void						handleNewConnection(void);
