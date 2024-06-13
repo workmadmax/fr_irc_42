@@ -64,4 +64,5 @@ class Server{
 		void						user(std::vector<std::string> _cmd_args, int _client_fd);
 		void						mode(std::vector<std::string> _cmd_args, int _client_fd);
 		bool						pass(std::vector<std::string> _cmd_args, int _client_fd);
+		void						cap(int _client_fd); // precisa para conseguir se autorizar lul
 };
