@@ -6,7 +6,7 @@
 /*   By: mdouglas <mdouglas@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/08 09:53:26 by mdouglas          #+#    #+#             */
-/*   Updated: 2024/06/11 14:43:59 by mdouglas         ###   ########.fr       */
+/*   Updated: 2024/06/13 15:39:27 by mdouglas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,77 +49,83 @@ void	Server::sendUnknowCommand(std::string _command, int _client_fd)
 
 void	Server::setupOptions(std::string& _buffer, int _client_fd)
 {
-	std::vector<std::string> _tokens = tokenize_buffer(_buffer);
+	std::vector<std::string> _split_tokens = tokenize_buffer(_buffer);
 	Client* _client = Server::handleClientFd(_client_fd);
-	std::string _requests[] = {
-		"NICK", "USER", "JOIN", "PRIVAMSG", "TOPIC", \
-		"MODE", "PRIVMSG", "QUIT", "WHO", "PASS", "KICK", "PART", "INVITE"
-	};
-
+	
+	std::string _requests[] = {"CAP", "USER", "NICK", "JOIN", "PRIVMSG", "QUIT", "MODE", "TOPIC", "INVITE", "KICK", "WHO", "PASS", "PART"};
+	
 	do {
 		int i = 0;
-		std::string _options = _tokens[0].substr(0, _tokens[0].find_first_of(" "));
-		std::cout << "buffer: " << _buffer << std::endl;
-		std::cout << "client: " << _client->getNick() << std::endl;
-		for (; i < 13; i++) {
+		std::string _options = _split_tokens[0].substr(0, _split_tokens[0].find(' '));
+		std::cout << "Buffer: " << _buffer << std::endl;
+		std::cout << "Client: " << _client_fd << std::endl;
+
+		for (; i < 13; i++)
+		{
 			if (_options == _requests[i])
 				break;
 		}
-		if (_client->isAuthorized() == false) {
-			if (i != 0 && i != 1 && i != 2 && i != 1) {
+		if (_client->isAuthorized() == false)
+		{
+			if (i != 0 && i != 1 && i != 2 && i != 11) {
 				std::string _response = "You must be authorized to use this command\n";
 				send(_client_fd, _response.c_str(), _response.size(), 0);
 				_client->_buffer_client.clear();
 				return ;
 			}
 		}
-		std::string _parsed_options = _tokens[0].substr(_tokens[0].find_first_of(" ") + 1);
-		switch (i) {
+		std::string _parse_cmd = _split_tokens[0].substr(_split_tokens[0].find(' ') + 1);
+		switch (i)
+		{
 			case 0:
-				user(tokenizeInput(_parsed_options), _client_fd);
-				break;
+				cap(_client_fd);
+				break ;
 			case 1:
-				nick(tokenizeInput(_parsed_options), _client_fd);
-				break;
+				user(tokenizeInput(_parse_cmd), _client_fd);
+				break ;
 			case 2:
-				join(tokenizeInput(_parsed_options), _client_fd);
-				break;
+				nick(tokenizeInput(_parse_cmd), _client_fd);
+				break ;
 			case 3:
-				privmsg(tokenizeInput(_parsed_options), _client_fd);
-				break;
+				join(tokenizeInput(_parse_cmd), _client_fd);
+				break ;
 			case 4:
-				topic(tokenizeInput(_parsed_options), _client_fd);
-				break;
+				privmsg(tokenizeInput(_parse_cmd), _client_fd);
+				break ;
 			case 5:
 				_client->_buffer_client.clear();
-				quit(tokenizeInput(_parsed_options), _client_fd);
-				_tokens.erase(_tokens.begin());
+				quit(tokenizeInput(_parse_cmd), _client_fd);
+				_split_tokens.erase(_split_tokens.begin());
 				return ;
-				break;
+				break ;
 			case 6:
-				mode(tokenizeInput(_parsed_options), _client_fd);
-				break;
+				mode(tokenizeInput(_parse_cmd), _client_fd);
+				break ;
 			case 7:
-				invite(tokenizeInput(_parsed_options), _client_fd);
-				break;
+				topic(tokenizeInput(_parse_cmd), _client_fd);
+				break ;
 			case 8:
-				kick(tokenizeInput(_parsed_options), _client_fd);
-				break;
+				invite(tokenizeInput(_parse_cmd), _client_fd);
+				break ;
 			case 9:
-				who(tokenizeInput(_parsed_options), _client_fd);
-				break;
+				kick(tokenizeInput(_parse_cmd), _client_fd);
+				break ;
 			case 10:
-				part(tokenizeInput(_parsed_options), _client_fd);
-				break;
+				who(tokenizeInput(_parse_cmd), _client_fd);
+				break ;
 			case 11:
-				if (pass(tokenizeInput(_parsed_options), _client_fd) == true)
+				if (pass(tokenizeInput(_parse_cmd), _client_fd) == false)
 					return ;
-				break;
+				break ;
+			case 12:
+				part(tokenizeInput(_parse_cmd), _client_fd);
+				break ;
 			default:
 				sendUnknowCommand(_options, _client_fd);
-				break;
+				break ;
 		}
-		_tokens.erase(_tokens.begin());
-	} while (!_tokens.empty());
+		_split_tokens.erase(_split_tokens.begin());
+	}
+	while (!_split_tokens.empty());
 	_client->_buffer_client.clear();
 };

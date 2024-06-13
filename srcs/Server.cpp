@@ -6,7 +6,7 @@
 /*   By: mdouglas <mdouglas@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/07 11:12:51 by mdouglas          #+#    #+#             */
-/*   Updated: 2024/06/12 18:50:31 by mdouglas         ###   ########.fr       */
+/*   Updated: 2024/06/13 15:23:09 by mdouglas         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -337,7 +337,9 @@ void	Server::runServer()
 					listenClient(_poll_fds[i].fd);
 			}
 		}
-	}	
+	}
+	closeClientFd();
+	freeClients();
 };
 
 /**
